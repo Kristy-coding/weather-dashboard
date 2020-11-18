@@ -1,0 +1,51 @@
+header {
+    text-align: center;
+    padding: 15px;
+    background-color: rgb(31, 39, 43);
+    color:white;
+}
+
+.search-container {
+    margin-left: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.dashboard-container {
+    padding: 15px;
+}
+
+input {
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 5px;
+    border-width: 1px;
+}
+
+.oi {
+    padding: 12px;
+    background-color: rgb(4, 167, 243);
+    color: white;
+    border-radius: 5px;
+}
+
+.current-city {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    max-width: 800px;
+}
+
+.forecast-card{
+    background: linear-gradient( rgb(4, 167, 243),  rgb(32, 85, 165));
+    color: white;
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .five-day-forecast {
+      justify-content: center;
+      text-align: center;
+      
+    }
+  }
