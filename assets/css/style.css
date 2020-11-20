@@ -26,6 +26,12 @@ header {
     padding: 20px;
 }
 
+#uv-index {
+    padding: 5px;
+    background-color: rgb(223, 66, 66);
+    border-radius: 5px;
+    color: white;
+}
 input {
     margin-bottom: 15px;
     padding: 10px;
@@ -47,7 +53,7 @@ input {
 }
 
 .five-day-forecast{
-    max-width: 900px;
+    max-width: 1000px;
 }
 
 .forecast-card{
