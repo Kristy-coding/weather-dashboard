@@ -15,14 +15,14 @@
     <main>
         <div class="row justify-content-center">
 
-            <!-- form container left column -->
-            <div class=" col-12 col-md-3 search-container">
-                <form class=" form-container">
+            <!-- form container -->
+            <div class=" col-12 col-md-3 bg-light search-container">
+                <form class="form-container">
                     <label for="fname"><h4>Search for a City:</h4></label></br>
-                    <input type="text" id="fname" name="fname"><span class="oi" data-glyph="magnifying-glass"></span>
+                    <input type="text" id="searchTerm" value="boston" name="fname"><button class="oi" id="search-btn" data-glyph="magnifying-glass"></button>   
                 </form>
             <!-- search history list-->
-                <div class="card search-history-list" style="width: 18rem;">
+                <div class="card search-history-list" id="search-history-list" style="width: auto;">
                     <ul class="list-group list-group-flush">
                     <li class="list-group-item"><a>Austin</a></li>
                     <li class="list-group-item"><a>Chicago</a></li>
@@ -37,23 +37,23 @@
             </div>
 
             <!-- dashboard container right column-->
-            <div class=" dashboard-container col -12 col-md-8">
+            <div class=" dashboard-container col-12 col-md-8">
                 <!-- nested row current city-->
                 <div class="row current-city">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-body">
-                              <h2 class="card-title"> Atlanta 8/15/2019</h2>
-                              <p class="card-text">Temperature:</p>
-                              <p class="card-text">Humidity:</p>
-                              <p class="card-text">Wind Speed:</p>
-                              <p class="card-text">UV Index:</p>
+                              <h2 class="card-title" id="current-city-title"> Atlanta 8/15/2019</h2>
+                              <p class="card-text">Temperature:<span id="current-city-temp"></span></p>
+                              <p class="card-text">Humidity:<span id="current-city-humidity"></span></p>
+                              <p class="card-text">Wind Speed:<span id="current-city-wind" ></span></p>
+                              <p class="card-text" id="uv-index">UV Index:</p>
                             </div>
                         </div>
                     </div>   
                 </div>
                 <!-- nested row cards-->
-                <div class="row five-day-forecast">
+                <div class="row five-day-forecast" id="forecast-card-container">
                     <div class="col-12"> <h4>5-Day Forecast:</h4></div>
                     <div class="col-12 col-md-auto"> 
                         <div class="card forecast-card">
