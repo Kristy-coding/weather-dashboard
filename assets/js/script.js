@@ -8,8 +8,7 @@ var getFeaturedWeather = function() {
     
     // format the open weather api url
 
-    var apiUrl = "api.openweathermap.org/data/2.5/forecast/daily?q=atlanta&cnt=6&appid=448dd92e479fd6f56636dd11706ccf74&units=imperial"
-  
+    var apiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=London&appid=aeed2b4f76bdbe411a612dd49400c7d4"
     // make a request to the url
     fetch(apiUrl)
       .then(function(response) {
