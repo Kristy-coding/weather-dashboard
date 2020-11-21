@@ -19,6 +19,8 @@ var searchHisotyListEl = document.getElementById("search-history-list");
 
 var searchButtonEl = document.getElementById("search-btn");
 
+var storedSearchTerm = [];
+
 
 
 
@@ -75,8 +77,10 @@ var getForecast = function(city) {
         response.json().then(function(data) {
 
           // call displayForecast and pass the data as an argument 
+          console.log(data);
+
           displayForecast(data);
-          getUvData(data)
+          getUvData(data);
     
         });
       } else {
@@ -111,33 +115,45 @@ var getSearchValue = function (event) {
 
 };
 
-var getSearchHistoryValue = function (event) {
+// var getSearchHistoryValue = function (event) {
 
-  var searchTerm = event.target.textContent
+//   var searchTerm = event.target
 
-  displayCurrentWeatherData(searchTerm)
+//   console.log(event.target)
+
+//   displayCurrentWeatherData(searchTerm)
   
-};
+// };
 
 var saveSearchTerm = function (searchTerm) {
 
-  localStorage.setItem("city",searchTerm)
+   localStorage.setItem("city",searchTerm)
+  
+  //storedSearchTerm.push()
+ 
+
 };
+
 
 
 var createSearchHistory = function () {
 
-    var searchTerm = localStorage.getItem("city")
+  storedSearchTerm = localStorage.getItem("city")
+
+
+  // loop through storedSearchTerm array to create them??
 
   // creeate list items to be displayed as a search history list 
   var li = document.createElement("li")
   li.classList.add("list-group-item")
 
-  li.innerHTML = '<button class="btn search-history-btn" value="city">'+ searchTerm + '</button>'
+  li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
 
   searchHisotyListEl.appendChild(li);
   
 };
+
+createSearchHistory();
 
 
 // fetch data for current weather of searchTerm 
@@ -172,16 +188,13 @@ var getCurrentWeatherData = function(searchTerm) {
 
 };
 
-getCurrentWeatherData();
-
-
       
  var displayCurrentWeatherData =function (weatherData) {
 
   var iconUrl = "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png";
 
   
-   currentCityTitle.innerHTML = weatherData.name + '<img src="' + iconUrl + '">'
+   currentCityTitle.innerHTML = weatherData.name + '<span> ('+ moment().format('ll') + ') </span>' +'<img src="' + iconUrl + '">' 
    currentCityWindSpeed.innerHTML =  weatherData.wind.speed 
    currentCityHumidity.innerHTML = weatherData.main.humidity 
    currentCityTemp.innerHTML = weatherData.main.temp 
@@ -205,42 +218,54 @@ var displayForecast = function (forecastData) {
   
   //console.log(forecastData);
 
+  
   for (var i= 0;  i < forecastData.list.length; i+=8 ) {
 
-    var forecastiIconUrl = "http://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
+    date =[moment().add(1,'days').format('L'),moment().add(2,'days').format('L'),moment().add(3,'days').format('L'),moment().add(4,'days').format('L'),moment().add(5,'days').format('L')]
 
-    var div = document.createElement("div")
+    // had to create a second for loop to iterate over to increment the data 
+    for(vari=0; i<date.length; i++){
+
+   
+
+      var forecastiIconUrl = "http://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
+
+      var div = document.createElement("div")
       div.classList.add("col-12", "col-md-auto")
 
                     
-    var innerHtml = 
+      var innerHtml = 
 
-    '<div class="card forecast-card">' + 
-      '<div class="card-body">' +
-          '<h5 class="card-title">8/16/2019</h5>' +
-          '<p class="card-text"><img src="' + forecastiIconUrl + '"></p>' + 
-          '<p class="card-text">Temp: '+forecastData.list[i].main.temp+' °F</p>' +
-          '<p class="card-text">Humidity: '+forecastData.list[i].main.humidity+'%</p>' +
-        '</div>' +
-    '</div>'
-
-
+     '<div class="card forecast-card">' + 
+        '<div class="card-body">' +
+            '<h5 class="card-title">'+ date[i] +'</h5>' +
+            '<p class="card-text"><img src="' + forecastiIconUrl + '"></p>' + 
+            '<p class="card-text">Temp: '+forecastData.list[i].main.temp+' °F</p>' +
+           '<p class="card-text">Humidity: '+forecastData.list[i].main.humidity+'%</p>' +
+          '</div>' +
+      '</div>'
 
 
-  div.innerHTML = innerHtml
 
-  forecastCardContainer.appendChild(div)
+
+      div.innerHTML = innerHtml
+
+      forecastCardContainer.appendChild(div)
+    
+    } 
 
   }
 
 };
 
 
-    
-    
-    searchButtonEl.addEventListener("click", getSearchValue);
 
-    searchHistoryList.addEventListener("click", getSearchHistoryValue);
+// get current weather data is called from page load with an item from local storage 
+getCurrentWeatherData(localStorage.getItem("city"));
+    
+searchButtonEl.addEventListener("click", getSearchValue);
+
+//searchHistoryList.addEventListener("click", getSearchHistoryValue);
 
     
 
