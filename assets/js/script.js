@@ -15,8 +15,13 @@ var searchInput =  document.querySelector('#searchTerm')
 
 var forecastCardContainer = document.getElementById("forecast-card-container");
 
+var searchHisotyListEl = document.getElementById("search-history-list");
 
 var searchButtonEl = document.getElementById("search-btn");
+
+
+
+
 
 
 
@@ -80,22 +85,67 @@ var getForecast = function(city) {
     })
     .catch(function(error) {
       // if internet is down? error type???
-      alert("unable to connect to GitHub");
+      alert("unable to connect");
     });
 };
 
 
-// fetch data for current weather of searchTerm 
-var getCurrentWeatherData = function(event) {
-
+var getSearchValue = function (event) {
   // to prevent form submission to refreshing the page 
   if (event) {
-  event.preventDefault();
-  }
+    event.preventDefault();
+    }
+    
+    var searchTerm = searchInput.value;
   
-  var searchTerm = searchInput.value;
+    console.log(searchTerm);
+
+  
+    // call getCurrentWeatherData with searchTerm 
+    getCurrentWeatherData(searchTerm)
+
+    // save the user input in local storage 
+    saveSearchTerm(searchTerm)
+
+    createSearchHistory()
+
+};
+
+var getSearchHistoryValue = function (event) {
+
+  var searchTerm = event.target.textContent
+
+  displayCurrentWeatherData(searchTerm)
+  
+};
+
+var saveSearchTerm = function (searchTerm) {
+
+  localStorage.setItem("city",searchTerm)
+};
+
+
+var createSearchHistory = function () {
+
+    var searchTerm = localStorage.getItem("city")
+
+  // creeate list items to be displayed as a search history list 
+  var li = document.createElement("li")
+  li.classList.add("list-group-item")
+
+  li.innerHTML = '<button class="btn search-history-btn" value="city">'+ searchTerm + '</button>'
+
+  searchHisotyListEl.appendChild(li);
+  
+};
+
+
+// fetch data for current weather of searchTerm 
+var getCurrentWeatherData = function(searchTerm) {
 
   var currentWeatherDataApiUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
+
+
 
     //format the response/promise
     fetch(currentWeatherDataApiUrl)
@@ -103,7 +153,7 @@ var getCurrentWeatherData = function(event) {
           if (response.ok){
             response.json().then(function(data) {
 
-              // call displayCurrentWeatherData and displayUvData and pass data as an argument to both functions
+              // call displayCurrentWeatherData and pass data as an argument to both functions
               displayCurrentWeatherData(data)
               
             });
@@ -136,9 +186,6 @@ getCurrentWeatherData();
    currentCityHumidity.innerHTML = weatherData.main.humidity 
    currentCityTemp.innerHTML = weatherData.main.temp 
 
-    
-
-  
 
   searchInput.value = ""
    
@@ -154,58 +201,49 @@ getCurrentWeatherData();
 
 var displayForecast = function (forecastData) {
 
-forecastCardContainer.innerHTML = ''
+  forecastCardContainer.innerHTML = ''
   
-//console.log(forecastData);
+  //console.log(forecastData);
 
-for (var i= 0;  i < forecastData.list.length; i+=8 ) {
+  for (var i= 0;  i < forecastData.list.length; i+=8 ) {
 
-  var forecastiIconUrl = "http://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
+    var forecastiIconUrl = "http://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
 
-  var div = document.createElement("div")
-    div.classList.add("col-12", "col-md-auto")
+    var div = document.createElement("div")
+      div.classList.add("col-12", "col-md-auto")
 
                     
-  var innerHtml = 
+    var innerHtml = 
 
-  '<div class="card forecast-card">' + 
-    '<div class="card-body">' +
-        '<h5 class="card-title">8/16/2019</h5>' +
-        '<p class="card-text"><img src="' + forecastiIconUrl + '"></p>' + 
-        '<p class="card-text">Temp: '+forecastData.list[i].main.temp+' °F</p>' +
-        '<p class="card-text">Humidity: '+forecastData.list[i].main.humidity+'%</p>' +
-      '</div>' +
-  '</div>'
-
-
-
-
-div.innerHTML = innerHtml
-
-forecastCardContainer.appendChild(div)
-
-
-  //console.log(forecastData.list[i])
-
-}
-
-}
+    '<div class="card forecast-card">' + 
+      '<div class="card-body">' +
+          '<h5 class="card-title">8/16/2019</h5>' +
+          '<p class="card-text"><img src="' + forecastiIconUrl + '"></p>' + 
+          '<p class="card-text">Temp: '+forecastData.list[i].main.temp+' °F</p>' +
+          '<p class="card-text">Humidity: '+forecastData.list[i].main.humidity+'%</p>' +
+        '</div>' +
+    '</div>'
 
 
 
- 
 
-  
+  div.innerHTML = innerHtml
 
+  forecastCardContainer.appendChild(div)
 
-// make a fucntion createSearchHistory(city)
+  }
 
-    // take input text and append to searchHistory List 
-    //get / set local storage 
-    // make search history link searchable 
+};
 
 
     
     
+    searchButtonEl.addEventListener("click", getSearchValue);
+
+    searchHistoryList.addEventListener("click", getSearchHistoryValue);
+
     
-    searchButtonEl.addEventListener("click", getCurrentWeatherData);
+
+    
+
+
