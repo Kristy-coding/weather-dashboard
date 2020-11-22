@@ -19,7 +19,8 @@ var searchHisotyListEl = document.getElementById("search-history-list");
 
 var searchButtonEl = document.getElementById("search-btn");
 
-var storedSearchTerm = [];
+var storageObj = {"city": "",
+                  "searchHistory":[]}
 
 
 
@@ -47,20 +48,19 @@ var getSearchValue = function (event) {
 };
 
 
-
 var getUvData = function (coordinates) {
 
-  console.log(coordinates);
+    //console.log(coordinates);
 
   var lat = coordinates.city.coord.lat
 
-  console.log(lat);
+    //console.log(lat);
 
   var lon = coordinates.city.coord.lon
 
-  console.log(lon);
+    //console.log(lon);
      
-  fetch("http://api.openweathermap.org/data/2.5/uvi?lat="+ lat +"&lon="+ lon +"&appid=aeed2b4f76bdbe411a612dd49400c7d4")
+  fetch("https://api.openweathermap.org/data/2.5/uvi?lat="+ lat +"&lon="+ lon +"&appid=aeed2b4f76bdbe411a612dd49400c7d4")
 
   .then(function(response) {
     if (response.ok){
@@ -88,7 +88,7 @@ var getUvData = function (coordinates) {
 var getForecast = function(city) {
     
  // format the response/promise
- var forecastApiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
+ var forecastApiUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
   
  // make a request to the url
   fetch(forecastApiUrl)
@@ -117,7 +117,7 @@ var getForecast = function(city) {
 
 var getCurrentWeatherData = function(searchTerm) {
 
-  var currentWeatherDataApiUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
+  var currentWeatherDataApiUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
 
     //format the response/promise
     fetch(currentWeatherDataApiUrl)
@@ -144,7 +144,9 @@ var getCurrentWeatherData = function(searchTerm) {
       
  var displayCurrentWeatherData =function (weatherData) {
 
-  var iconUrl = "http://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png";
+  // had to get Icon url seperately from data 
+
+  var iconUrl = "https://openweathermap.org/img/w/" + weatherData.weather[0].icon + ".png";
 
   
    currentCityTitle.innerHTML = weatherData.name + '<span> ('+ moment().format('ll') + ') </span>' +'<img src="' + iconUrl + '">' 
@@ -168,10 +170,9 @@ var getCurrentWeatherData = function(searchTerm) {
 var displayForecast = function (forecastData) {
 
   forecastCardContainer.innerHTML = ''
-  
-  //console.log(forecastData);
 
-  
+  // increment by +8 so that you get a forecast for each day. The array is 40 so if we increment by 8 we should get a forecast for the same time each day 
+
   for (var i= 0;  i < forecastData.list.length; i+=8 ) {
 
     date =[moment().add(1,'days').format('L'),moment().add(2,'days').format('L'),moment().add(3,'days').format('L'),moment().add(4,'days').format('L'),moment().add(5,'days').format('L')]
@@ -179,9 +180,8 @@ var displayForecast = function (forecastData) {
     // had to create a second for loop to iterate over to increment the data 
     for(vari=0; i<date.length; i++){
 
-   
 
-      var forecastiIconUrl = "http://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
+      var forecastiIconUrl = "https://openweathermap.org/img/w/" + forecastData.list[i].weather[0].icon + ".png";
 
       var div = document.createElement("div")
       div.classList.add("col-12", "col-md-auto")
@@ -202,9 +202,9 @@ var displayForecast = function (forecastData) {
       
       forecastCardContainer.appendChild(div)
     
-    } 
+    }; 
 
-  }
+  };
 
 };
 
@@ -214,15 +214,20 @@ var saveSearchTerm = function (searchTerm) {
 
   localStorage.setItem("city", searchTerm)
  
-  //storedSearchTerm.push(searchTerm);
+  //storedSearchTermarray.push(searchTerm);
 
+  
 
 };
 
 
 var loadSearchHistory = function () {
 
-  storedSearchTerm = localStorage.getItem("city")
+  
+
+  storedSearchTerm = localStorage.getItem("city");
+
+  
 
   //  if(storedSearchTerm === null) {
   //     storedSearchTerm = []
@@ -232,16 +237,29 @@ var loadSearchHistory = function () {
   //   }
 
 
- // creeate list items to be displayed as a search history list 
+  // creeate list items to be displayed as a search history list 
 
- var li = document.createElement("li")
- li.classList.add("list-group-item")
+  var li = document.createElement("li")
 
- li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
+    li.classList.add("list-group-item")
 
- searchHisotyListEl.appendChild(li);
+    li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
+
+    searchHisotyListEl.appendChild(li);
  
 };
+
+
+//var searchHistoryHandler = function (event) {
+
+  //put an event listener on the searchHistory buttons 
+  // when a button is clicked, get the value and pass it to getCurrentWeatherData(value)
+
+  // can i use event.target to get the value of the button??
+
+
+  
+//}
 
 
 
@@ -250,7 +268,7 @@ var loadSearchHistory = function () {
 
 loadSearchHistory();
 
-// get current weather data is called from page load with an item from local storage 
+// get current weather data is called from page load with an item from local storage so the page doesn't present with plank data on first page load
 
 getCurrentWeatherData(localStorage.getItem("city"));
     
