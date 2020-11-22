@@ -24,7 +24,27 @@ var storedSearchTerm = [];
 
 
 
+var getSearchValue = function (event) {
 
+    // to prevent form submission to refreshing the page 
+    if (event) {
+      event.preventDefault();
+    }
+    
+    var searchTerm = searchInput.value;
+  
+    console.log(searchTerm);
+
+  
+    // call getCurrentWeatherData with searchTerm 
+    getCurrentWeatherData(searchTerm);
+
+    // save the user input in local storage 
+    saveSearchTerm(searchTerm);
+
+    loadSearchHistory();
+
+};
 
 
 
@@ -40,7 +60,7 @@ var getUvData = function (coordinates) {
 
   console.log(lon);
      
-fetch("http://api.openweathermap.org/data/2.5/uvi?lat="+ lat +"&lon="+ lon +"&appid=aeed2b4f76bdbe411a612dd49400c7d4")
+  fetch("http://api.openweathermap.org/data/2.5/uvi?lat="+ lat +"&lon="+ lon +"&appid=aeed2b4f76bdbe411a612dd49400c7d4")
 
   .then(function(response) {
     if (response.ok){
@@ -55,19 +75,19 @@ fetch("http://api.openweathermap.org/data/2.5/uvi?lat="+ lat +"&lon="+ lon +"&ap
       });
     } else {
       alert("Error: " + response.statusText);
-    }
-  })
-  .catch(function(error) {
+      }
+      })
+    .catch(function(error) {
     // if internet is down? error type???
     alert("unable to");
   });
 
- }
+};
 
 
 var getForecast = function(city) {
     
-// format the response/promise
+ // format the response/promise
  var forecastApiUrl = "http://api.openweathermap.org/data/2.5/forecast?q=" + city + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
   
  // make a request to the url
@@ -93,75 +113,11 @@ var getForecast = function(city) {
     });
 };
 
-
-var getSearchValue = function (event) {
-  // to prevent form submission to refreshing the page 
-  if (event) {
-    event.preventDefault();
-    }
-    
-    var searchTerm = searchInput.value;
-  
-    console.log(searchTerm);
-
-  
-    // call getCurrentWeatherData with searchTerm 
-    getCurrentWeatherData(searchTerm)
-
-    // save the user input in local storage 
-    saveSearchTerm(searchTerm)
-
-    createSearchHistory()
-
-};
-
-// var getSearchHistoryValue = function (event) {
-
-//   var searchTerm = event.target
-
-//   console.log(event.target)
-
-//   displayCurrentWeatherData(searchTerm)
-  
-// };
-
-var saveSearchTerm = function (searchTerm) {
-
-   localStorage.setItem("city",searchTerm)
-  
-  //storedSearchTerm.push()
- 
-
-};
-
-
-
-var createSearchHistory = function () {
-
-  storedSearchTerm = localStorage.getItem("city")
-
-
-  // loop through storedSearchTerm array to create them??
-
-  // creeate list items to be displayed as a search history list 
-  var li = document.createElement("li")
-  li.classList.add("list-group-item")
-
-  li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
-
-  searchHisotyListEl.appendChild(li);
-  
-};
-
-createSearchHistory();
-
-
 // fetch data for current weather of searchTerm 
+
 var getCurrentWeatherData = function(searchTerm) {
 
   var currentWeatherDataApiUrl = "http://api.openweathermap.org/data/2.5/weather?q=" + searchTerm + "&appid=aeed2b4f76bdbe411a612dd49400c7d4&units=imperial"
-
-
 
     //format the response/promise
     fetch(currentWeatherDataApiUrl)
@@ -180,9 +136,6 @@ var getCurrentWeatherData = function(searchTerm) {
         .catch(function(error) {
           alert("unable to connect");
         });
-
-  //call getForecast and pass in an arugument or parameter gerForecast(city or searchTerm??)
-  //getForecast(city)
 
   getForecast(searchTerm);
 
@@ -209,7 +162,7 @@ var getCurrentWeatherData = function(searchTerm) {
 
   currentCityUvIndex.innerHTML = uvdata.value
    
- }
+ };
 
 
 var displayForecast = function (forecastData) {
@@ -245,11 +198,8 @@ var displayForecast = function (forecastData) {
           '</div>' +
       '</div>'
 
-
-
-
       div.innerHTML = innerHtml
-
+      
       forecastCardContainer.appendChild(div)
     
     } 
@@ -259,8 +209,49 @@ var displayForecast = function (forecastData) {
 };
 
 
+var saveSearchTerm = function (searchTerm) {
+
+
+  localStorage.setItem("city", searchTerm)
+ 
+  //storedSearchTerm.push(searchTerm);
+
+
+};
+
+
+var loadSearchHistory = function () {
+
+  storedSearchTerm = localStorage.getItem("city")
+
+  //  if(storedSearchTerm === null) {
+  //     storedSearchTerm = []
+  //   }
+  //   else{
+  //    storedSearchTerm = JSON.parse(storedSearchTerm);
+  //   }
+
+
+ // creeate list items to be displayed as a search history list 
+
+ var li = document.createElement("li")
+ li.classList.add("list-group-item")
+
+ li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
+
+ searchHisotyListEl.appendChild(li);
+ 
+};
+
+
+
+
+// on page load I want search history to be displayed, so call it at bottom of page 
+
+loadSearchHistory();
 
 // get current weather data is called from page load with an item from local storage 
+
 getCurrentWeatherData(localStorage.getItem("city"));
     
 searchButtonEl.addEventListener("click", getSearchValue);
