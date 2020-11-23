@@ -15,12 +15,11 @@ var searchInput =  document.querySelector('#searchTerm')
 
 var forecastCardContainer = document.getElementById("forecast-card-container");
 
-var searchHisotyListEl = document.getElementById("search-history-list");
+var searchHistoryListEl = document.getElementById("search-history-list");
 
 var searchButtonEl = document.getElementById("search-btn");
 
-var storageObj = {"city": "",
-                  "searchHistory":[]}
+var cityList = [];
 
 
 
@@ -213,10 +212,17 @@ var saveSearchTerm = function (searchTerm) {
 
 
   localStorage.setItem("city", searchTerm)
- 
-  //storedSearchTermarray.push(searchTerm);
 
+
+ // I wanted to figure out how to limit number of items in an array so tutor helped me find unshift() insted of push 
+ //unshift() will add new searches to the front of the array insted of the end
+  cityList.unshift(searchTerm); 
+
+  // limit number of cities in array to 10, slice() is going to slice off any of the data after and including index 10
+   cityList = cityList.slice(0,10);
   
+
+  localStorage.setItem("cityList",JSON.stringify(cityList) )
 
 };
 
@@ -225,41 +231,52 @@ var loadSearchHistory = function () {
 
   
 
-  storedSearchTerm = localStorage.getItem("city");
-
   
 
-  //  if(storedSearchTerm === null) {
-  //     storedSearchTerm = []
-  //   }
-  //   else{
-  //    storedSearchTerm = JSON.parse(storedSearchTerm);
-  //   }
+  cityList = JSON.parse(localStorage.getItem("cityList")) || [];
 
+  console.log(cityList);
+  
+
+
+  searchHistoryListEl.innerHTML = ""
 
   // creeate list items to be displayed as a search history list 
+
+  for (var i= 0; i < cityList.length; i++){
 
   var li = document.createElement("li")
 
     li.classList.add("list-group-item")
 
-    li.innerHTML = '<button class="btn search-history-btn" value="city">'+ storedSearchTerm + '</button>'
+    li.innerHTML = '<button class="btn search-history-btn" value="'+ cityList[i]+'">'+ cityList[i] + '</button>'
 
-    searchHisotyListEl.appendChild(li);
+    searchHistoryListEl.appendChild(li);
+
+  }
  
 };
 
 
-//var searchHistoryHandler = function (event) {
+var searchHistoryHandler = function (event) {
+
+  var button = (event.target);
+  if (button.classList.contains("search-history-btn")) {
+
+    getCurrentWeatherData(button.value);
+
+  }
 
   //put an event listener on the searchHistory buttons 
   // when a button is clicked, get the value and pass it to getCurrentWeatherData(value)
 
   // can i use event.target to get the value of the button??
 
+  // HOW DO I GET THE VALUE of the button? 
+
 
   
-//}
+}
 
 
 
@@ -270,11 +287,19 @@ loadSearchHistory();
 
 // get current weather data is called from page load with an item from local storage so the page doesn't present with plank data on first page load
 
-getCurrentWeatherData(localStorage.getItem("city"));
+var defaultSearchTerm = "Boston";
+
+if (JSON.parse(localStorage.getItem("cityList"))) {
+  
+  defaultSearchTerm = JSON.parse(localStorage.getItem("cityList"))[0]
+
+};
+
+getCurrentWeatherData(defaultSearchTerm);
     
 searchButtonEl.addEventListener("click", getSearchValue);
 
-//searchHistoryList.addEventListener("click", getSearchHistoryValue);
+searchHistoryListEl.addEventListener("click", searchHistoryHandler);
 
     
 
