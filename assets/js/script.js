@@ -33,7 +33,7 @@ var getSearchValue = function (event) {
     
     var searchTerm = searchInput.value;
   
-    console.log(searchTerm);
+    //console.log(searchTerm);
 
   
     // call getCurrentWeatherData with searchTerm 
@@ -67,7 +67,7 @@ var getUvData = function (coordinates) {
 
         // call displayUvData and pass the data as an argument 
 
-        console.log(data)
+        //console.log(data)
 
         displayUvData(data);
         
@@ -96,7 +96,7 @@ var getForecast = function(city) {
         response.json().then(function(data) {
 
           // call displayForecast and pass the data as an argument 
-          console.log(data);
+          //console.log(data);
 
           displayForecast(data);
           getUvData(data);
@@ -208,40 +208,40 @@ var displayForecast = function (forecastData) {
 };
 
 
+// save search history to local storage, this function is being call as soon as the user inputs a city 
+
 var saveSearchTerm = function (searchTerm) {
 
 
-  localStorage.setItem("city", searchTerm)
+  //localStorage.setItem("city", searchTerm)
 
 
- // I wanted to figure out how to limit number of items in an array so tutor helped me find unshift() insted of push 
- //unshift() will add new searches to the front of the array insted of the end
-  cityList.unshift(searchTerm); 
+    // I wanted to figure out how to limit number of items in an array so tutor helped me find unshift() insted of push 
+    // looked at array methods: pop(), shift(), unshift(), push()
+    //unshift() will add new searches to the front of the array insted of the end
+    cityList.unshift(searchTerm); 
 
-  // limit number of cities in array to 10, slice() is going to slice off any of the data after and including index 10
-   cityList = cityList.slice(0,10);
+    // limit number of cities in array to 10, slice() is going to slice off any of the data after and including index 10
+    cityList = cityList.slice(0,10);
   
 
-  localStorage.setItem("cityList",JSON.stringify(cityList) )
+    localStorage.setItem("cityList",JSON.stringify(cityList))
 
 };
 
 
 var loadSearchHistory = function () {
 
-  
-
-  
-
+  // get the array from local storage or set it equal to an empty array if nothing in local storage so don't get a null value 
   cityList = JSON.parse(localStorage.getItem("cityList")) || [];
 
-  console.log(cityList);
+  //console.log(cityList);
   
 
-
+  // clear the inner HTML that is on the page so that the stored array gets generated on a fresh page and not added on top of the array that is there 
   searchHistoryListEl.innerHTML = ""
 
-  // creeate list items to be displayed as a search history list 
+  // loop through cityList array that is stored in local storage and dynamically create persistant list items 
 
   for (var i= 0; i < cityList.length; i++){
 
@@ -257,7 +257,7 @@ var loadSearchHistory = function () {
  
 };
 
-
+// when a button is clicked I used event delegation to call getCurrentWeatherData value of the button that was clicked using event.target.value
 var searchHistoryHandler = function (event) {
 
   var button = (event.target);
@@ -265,18 +265,8 @@ var searchHistoryHandler = function (event) {
 
     getCurrentWeatherData(button.value);
 
-  }
-
-  //put an event listener on the searchHistory buttons 
-  // when a button is clicked, get the value and pass it to getCurrentWeatherData(value)
-
-  // can i use event.target to get the value of the button??
-
-  // HOW DO I GET THE VALUE of the button? 
-
-
-  
-}
+  }  
+};
 
 
 
@@ -285,15 +275,9 @@ var searchHistoryHandler = function (event) {
 
 loadSearchHistory();
 
-// get current weather data is called from page load with an item from local storage so the page doesn't present with plank data on first page load
+// get current weather data is called from page load with a defaultSearchTerm that I set as the first value of the cityList array using cityList.shift()
 
-var defaultSearchTerm = "Boston";
-
-if (JSON.parse(localStorage.getItem("cityList"))) {
-  
-  defaultSearchTerm = JSON.parse(localStorage.getItem("cityList"))[0]
-
-};
+var defaultSearchTerm = (cityList.shift()) ;
 
 getCurrentWeatherData(defaultSearchTerm);
     
